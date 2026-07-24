@@ -6,116 +6,16 @@ import {
   MessageCircle, ExternalLink, CheckCircle,
 } from "lucide-react"
 import axseaLogo from "@/imports/channels4_profile.jpg"
+import { useSiteContent } from "@/app/hooks/useSiteContent"
+import type {
+  VideoItem, CatchLogItem, GearItem, CourseItem,
+  TestimonialItem, SpotItem, MerchItem, SponsorItem, TimelineItem,
+} from "@/app/data/types"
 
-// ─── DATA ─────────────────────────────────────────────────────
+// ─── STATIC SITE STRUCTURE ────────────────────────────────────
+// Nav labels are page structure, not editorial content — they stay in code.
 
 const NAV_LINKS = ["Home", "About Me", "My Setups", "Courses", "Contact"]
-
-const CATCH_LOG = [
-  {
-    id: 1, species: "Bluefin Tuna", location: "Gulf of Mexico", date: "Jun 12, 2025", weight: "187 lbs",
-    photo: "https://images.unsplash.com/photo-1566177229701-8895c29b9c68?w=600&h=400&fit=crop&auto=format",
-    story: "Three hours into the fight, this beast changed directions twice. Biggest blue I've ever put on the deck.",
-  },
-  {
-    id: 2, species: "Mahi-Mahi", location: "Bahamas", date: "May 3, 2025", weight: "34 lbs",
-    photo: "https://images.unsplash.com/photo-1515631604561-23e0be68ee06?w=600&h=400&fit=crop&auto=format",
-    story: "Lit up like a neon sign when it hit the surface. Colour on this one was absolutely insane.",
-  },
-  {
-    id: 3, species: "Striped Bass", location: "Cape Cod, MA", date: "Apr 18, 2025", weight: "48 lbs",
-    photo: "https://images.unsplash.com/photo-1707314175601-0b614b1224a8?w=600&h=400&fit=crop&auto=format",
-    story: "First bass of the season and she didn't disappoint. Popper bite at dawn, no better way to start the year.",
-  },
-  {
-    id: 4, species: "Wahoo", location: "Florida Keys", date: "Mar 7, 2025", weight: "61 lbs",
-    photo: "https://images.unsplash.com/photo-1601226041388-8bbabdd6e37e?w=600&h=400&fit=crop&auto=format",
-    story: "Trolling spreader bars 35 miles out. This rocket hit the flat line at 40 knots then came back for more.",
-  },
-  {
-    id: 5, species: "Snook", location: "Everglades, FL", date: "Feb 21, 2025", weight: "27 lbs",
-    photo: "https://images.unsplash.com/photo-1562053923-52d3ebb09d31?w=600&h=400&fit=crop&auto=format",
-    story: "Full moon low tide, mangrove edge. Swimbait. Gnarliest snook I've tangled with in the backcountry.",
-  },
-  {
-    id: 6, species: "Mahi-Mahi", location: "Atlantic, NC", date: "Jan 14, 2025", weight: "29 lbs",
-    photo: "https://images.unsplash.com/photo-1625183656263-171183307b15?w=600&h=400&fit=crop&auto=format",
-    story: "Weedline was on fire. Caught 8 in a morning — this bull was the pick of the bunch.",
-  },
-]
-
-const SPECIES_FILTERS = ["All", "Bluefin Tuna", "Mahi-Mahi", "Striped Bass", "Wahoo", "Snook"]
-
-const VIDEOS = [
-  { title: "187lb Bluefin Tuna — 3-Hour Battle in the Gulf", views: "1.2M views", duration: "22:14", platform: "YouTube", thumb: "https://images.unsplash.com/photo-1605750416507-734370f71920?w=600&h=340&fit=crop&auto=format" },
-  { title: "Mahi Slaughter — Bahamas Weedline Run", views: "847K views", duration: "18:32", platform: "YouTube", thumb: "https://images.unsplash.com/photo-1601226041388-8bbabdd6e37e?w=600&h=340&fit=crop&auto=format" },
-  { title: "Night Tarpon Under the Bridge — Keys POV", views: "3.1M views", duration: "09:47", platform: "TikTok", thumb: "https://images.unsplash.com/photo-1582658085438-790f8837944b?w=600&h=340&fit=crop&auto=format" },
-  { title: "Rigging a Spreader Bar for Tuna — Full Tutorial", views: "612K views", duration: "31:05", platform: "YouTube", thumb: "https://images.unsplash.com/photo-1551131618-3f0a5cf594b4?w=600&h=340&fit=crop&auto=format" },
-  { title: "Striped Bass on the Cape Cod Rip — Popper Bite", views: "498K views", duration: "14:21", platform: "YouTube", thumb: "https://images.unsplash.com/photo-1515631604561-23e0be68ee06?w=600&h=340&fit=crop&auto=format" },
-  { title: "Reading Sonar: How I Find Fish in Open Water", views: "1.8M views", duration: "28:11", platform: "YouTube", thumb: "https://images.unsplash.com/photo-1595886565824-b4f5c5a9c2d5?w=600&h=340&fit=crop&auto=format" },
-]
-
-const GEAR = [
-  {
-    category: "Offshore Heavy",
-    items: [
-      { name: "Shimano Stella 20000", type: "Reel", desc: "Beast mode for tuna and marlin. This reel eats 200lb braid for breakfast.", img: "https://images.unsplash.com/photo-1537872384762-e785271d14f8?w=400&h=300&fit=crop&auto=format" },
-      { name: "Penn Carnage III 80–130lb", type: "Rod", desc: "Full-length blank wrap. Built to subdue tuna, not tickle them.", img: "https://images.unsplash.com/photo-1551131618-3f0a5cf594b4?w=400&h=300&fit=crop&auto=format" },
-      { name: "Boston Whaler 270 Dauntless", type: "Boat", desc: "Unsinkable hull, twin Yamaha 200s. My office from March through November.", img: "https://images.unsplash.com/photo-1625183656263-171183307b15?w=400&h=300&fit=crop&auto=format" },
-      { name: "Williamson Speed Pro Lures", type: "Tackle", desc: "High-speed trolling lures that trigger tuna when nothing else will.", img: "https://images.unsplash.com/photo-1541742425281-c1d3fc8aff96?w=400&h=300&fit=crop&auto=format" },
-    ],
-  },
-  {
-    category: "Inshore Finesse",
-    items: [
-      { name: "Daiwa Tatula SV TW", type: "Reel", desc: "Buttery smooth for targeting snook and redfish on light braid.", img: "https://images.unsplash.com/photo-1505850557988-b858c0aec076?w=400&h=300&fit=crop&auto=format" },
-      { name: "St. Croix Mojo Inshore", type: "Rod", desc: "Sensitive enough to feel the tick, stiff enough to set the hook hard.", img: "https://images.unsplash.com/photo-1529230117010-b6c436154f25?w=400&h=300&fit=crop&auto=format" },
-      { name: "Rapala X-Rap Saltwater", type: "Lure", desc: "Walks the dog perfectly over grass flats. My go-to for snook on the prowl.", img: "https://images.unsplash.com/photo-1595886565824-b4f5c5a9c2d5?w=400&h=300&fit=crop&auto=format" },
-      { name: "Power Pro Spectra 30lb", type: "Line", desc: "Zero stretch, incredible sensitivity. The backbone of every inshore setup.", img: "https://images.unsplash.com/photo-1552340745-89c5073640ad?w=400&h=300&fit=crop&auto=format" },
-    ],
-  },
-]
-
-const COURSES = [
-  {
-    name: "Beginner's Hook", price: "$49", level: "Beginner", emoji: "🎯", popular: false, accentColor: "#5DDBD3",
-    desc: "Zero to first catch. Gear, knots, reading water, and setting the hook — everything you need to stop blanking.",
-    includes: ["6 HD video modules", "Gear buying guide PDF", "Private Discord access", "Lifetime updates"],
-  },
-  {
-    name: "Offshore Unlocked", price: "$149", level: "Intermediate", emoji: "🎣", popular: true, accentColor: "#FF6B35",
-    desc: "Trolling strategy, sonar reading, rigging spreader bars, and fighting the big ones without blowing up your gear.",
-    includes: ["12 HD video modules", "Trolling spread guide PDF", "Sonar cheat sheet", "Monthly Q&A calls", "Discord + lifetime access"],
-  },
-  {
-    name: "Axel's Inner Circle", price: "$499", level: "Advanced", emoji: "🏆", popular: false, accentColor: "#F59E0B",
-    desc: "Personal mentorship. Fish with Axel virtually and in-person. Limited to 10 students per cohort.",
-    includes: ["Everything in Offshore Unlocked", "3 × 1hr Zoom calls with Axel", "Invite to 1 guided trip", "Axsea gear bundle"],
-  },
-]
-
-const TESTIMONIALS = [
-  { name: "Marco D.", location: "Miami, FL", course: "Offshore Unlocked", stars: 5, text: "Axel's sonar breakdown alone paid for the course ten times over. Landed my first bluefin three weeks after finishing." },
-  { name: "Jenna R.", location: "Charleston, SC", course: "Beginner's Hook", stars: 5, text: "I went from not knowing what end of the rod to hold to catching stripers off the jetty. The knot videos saved my life." },
-  { name: "Tyler K.", location: "Tampa, FL", course: "Axel's Inner Circle", stars: 5, text: "Best money I've ever spent on fishing. Axel called me after my first offshore trip and talked me through everything." },
-]
-
-const SPOTS = [
-  { id: 1, name: "Gulf of Mexico", x: 27, y: 43, species: "Bluefin Tuna, Red Snapper", best: "Mar – Oct", note: "Deep water humps 80mi out. Current lines are everything." },
-  { id: 2, name: "Bahamas", x: 33, y: 44, species: "Mahi-Mahi, Wahoo, Sailfish", best: "Jan – Jun", note: "Weedlines hold mahi. Deep blue walls hold wahoo on the troll." },
-  { id: 3, name: "Florida Keys", x: 30, y: 47, species: "Snook, Tarpon, Bonefish", best: "Year-round", note: "Backcountry flats fishing. Night tarpon under bridges is legendary." },
-  { id: 4, name: "Cape Cod, MA", x: 40, y: 34, species: "Striped Bass, Bluefish", best: "Apr – Nov", note: "Race Point rip in August — stripers stacked. Popper bite at dawn." },
-  { id: 5, name: "Nova Scotia", x: 44, y: 28, species: "Atlantic Bluefin Tuna", best: "Aug – Oct", note: "Massive bluefin migration. Chunking on mackerel. Arm-burning fights." },
-  { id: 6, name: "Cancún", x: 25, y: 47, species: "Sailfish, Marlin, Dorado", best: "Nov – Apr", note: "Blue water 10 miles out. Sails are thick all winter." },
-]
-
-const SPONSORS = ["PENN", "SHIMANO", "YETI", "SIMMS", "RAPALA", "BUFF®", "SEAGUAR", "CALCUTTA"]
-
-const MERCH = [
-  { name: "Axsea Logo Tee", price: "$35", img: "https://images.unsplash.com/photo-1529230117010-b6c436154f25?w=400&h=400&fit=crop&auto=format" },
-  { name: "Fish or Die Cap", price: "$28", img: "https://images.unsplash.com/photo-1541742425281-c1d3fc8aff96?w=400&h=400&fit=crop&auto=format" },
-  { name: "Offshore Hoodie", price: "$65", img: "https://images.unsplash.com/photo-1552340745-89c5073640ad?w=400&h=400&fit=crop&auto=format" },
-]
 
 // ─── INTRO ANIMATION ──────────────────────────────────────────
 
@@ -300,11 +200,11 @@ function Navbar() {
 
 // ─── HERO ─────────────────────────────────────────────────────
 
-function Hero() {
+function Hero({ config }: { config: Record<string, string> }) {
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
       <img
-        src="https://images.unsplash.com/photo-1605750416507-734370f71920?w=1800&h=1100&fit=crop&auto=format"
+        src={config.heroImage}
         alt="Silhouette fishing at sunset"
         className="absolute inset-0 w-full h-full object-cover"
       />
@@ -317,7 +217,7 @@ function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.6 }}
         >
-          Axel Béchard · Content Creator · Fisherman
+          {config.heroKicker}
         </motion.span>
 
         <motion.h1
@@ -327,9 +227,9 @@ function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.38, duration: 0.7 }}
         >
-          Chasing Fish,
+          {config.heroTitleLine1}
           <br />
-          <span className="text-[#5DDBD3]">Sharing the Ride.</span>
+          <span className="text-[#5DDBD3]">{config.heroTitleLine2}</span>
         </motion.h1>
 
         <motion.p
@@ -338,7 +238,7 @@ function Hero() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.58, duration: 0.6 }}
         >
-          From Gulf of Mexico tuna to Everglades snook — we go where the bite is hot and bring you along for every single cast.
+          {config.heroSubtitle}
         </motion.p>
 
         <motion.div
@@ -383,14 +283,14 @@ function Hero() {
 
 // ─── SOCIAL PROOF BAR ─────────────────────────────────────────
 
-function SocialProofBar() {
+function SocialProofBar({ config }: { config: Record<string, string> }) {
   const stats = [
-    { label: "YouTube", value: "248K", icon: <Youtube className="w-4 h-4" /> },
-    { label: "Instagram", value: "183K", icon: <Instagram className="w-4 h-4" /> },
-    { label: "TikTok", value: "512K", icon: <span className="text-xs font-black">TK</span> },
-    { label: "Years Fishing", value: "14+", icon: <Anchor className="w-4 h-4" /> },
-    { label: "Students", value: "3,200+", icon: <BookOpen className="w-4 h-4" /> },
-    { label: "Biggest Catch", value: "248 lbs", icon: <Award className="w-4 h-4" /> },
+    { label: "YouTube", value: config.statYoutube, icon: <Youtube className="w-4 h-4" /> },
+    { label: "Instagram", value: config.statInstagram, icon: <Instagram className="w-4 h-4" /> },
+    { label: "TikTok", value: config.statTiktok, icon: <span className="text-xs font-black">TK</span> },
+    { label: "Years Fishing", value: config.statYearsFishing, icon: <Anchor className="w-4 h-4" /> },
+    { label: "Students", value: config.statStudents, icon: <BookOpen className="w-4 h-4" /> },
+    { label: "Biggest Catch", value: config.statBiggestCatch, icon: <Award className="w-4 h-4" /> },
   ]
 
   return (
@@ -412,7 +312,7 @@ function SocialProofBar() {
 
 // ─── FEATURED VIDEOS ──────────────────────────────────────────
 
-function FeaturedVideos() {
+function FeaturedVideos({ videos }: { videos: VideoItem[] }) {
   return (
     <section className="py-24 bg-[#0D0D0D]" id="videos">
       <div className="max-w-7xl mx-auto px-6">
@@ -432,10 +332,13 @@ function FeaturedVideos() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {VIDEOS.map((v, i) => (
-            <motion.div
-              key={v.title}
-              className="group relative rounded-2xl overflow-hidden bg-[#1A1A1A] cursor-pointer"
+          {videos.map((v, i) => (
+            <motion.a
+              key={`${v.title}-${i}`}
+              href={v.url}
+              target={v.url && v.url !== "#" ? "_blank" : undefined}
+              rel={v.url && v.url !== "#" ? "noopener noreferrer" : undefined}
+              className="group relative rounded-2xl overflow-hidden bg-[#1A1A1A] cursor-pointer block"
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
@@ -471,7 +374,7 @@ function FeaturedVideos() {
                 <p className="text-white font-semibold text-sm leading-snug line-clamp-2 mb-2">{v.title}</p>
                 <p className="text-white/35 text-xs">{v.views}</p>
               </div>
-            </motion.div>
+            </motion.a>
           ))}
         </div>
       </div>
@@ -481,9 +384,10 @@ function FeaturedVideos() {
 
 // ─── CATCH LOG ────────────────────────────────────────────────
 
-function CatchLog() {
+function CatchLog({ catchLog }: { catchLog: CatchLogItem[] }) {
+  const speciesFilters = ["All", ...Array.from(new Set(catchLog.map((c) => c.species)))]
   const [filter, setFilter] = useState("All")
-  const filtered = filter === "All" ? CATCH_LOG : CATCH_LOG.filter((c) => c.species === filter)
+  const filtered = filter === "All" ? catchLog : catchLog.filter((c) => c.species === filter)
 
   return (
     <section className="py-24 bg-[#111111]" id="catch-log">
@@ -498,7 +402,7 @@ function CatchLog() {
 
         {/* Filters */}
         <div className="flex flex-wrap gap-2 mb-9">
-          {SPECIES_FILTERS.map((s) => (
+          {speciesFilters.map((s) => (
             <button
               key={s}
               onClick={() => setFilter(s)}
@@ -558,16 +462,7 @@ function CatchLog() {
 
 // ─── ABOUT ME ─────────────────────────────────────────────────
 
-function AboutMe() {
-  const timeline = [
-    { year: "2010", event: "First fishing rod at age 12 — immediately, embarrassingly obsessed." },
-    { year: "2015", event: "First offshore trip. Caught a mahi. Life changed forever." },
-    { year: "2018", event: "Started posting catch videos. 200 subscribers in year one." },
-    { year: "2020", event: "Hit 10K on YouTube. Bought the Boston Whaler. No regrets." },
-    { year: "2022", event: "Launched first fishing course — 400 students in 30 days." },
-    { year: "2025", event: "943K total followers. Still chasing that 300lb tuna." },
-  ]
-
+function AboutMe({ config, timeline }: { config: Record<string, string>; timeline: TimelineItem[] }) {
   return (
     <section className="py-24 bg-[#0D0D0D]" id="about-me">
       <div className="max-w-7xl mx-auto px-6">
@@ -582,15 +477,15 @@ function AboutMe() {
           >
             <div className="aspect-[4/5] rounded-3xl overflow-hidden bg-[#1A1A1A]">
               <img
-                src="https://images.unsplash.com/photo-1582658085438-790f8837944b?w=800&h=1000&fit=crop&auto=format"
-                alt="Axel Béchard fishing offshore"
+                src={config.aboutPhoto}
+                alt={`${config.aboutName} fishing offshore`}
                 className="w-full h-full object-cover"
               />
             </div>
             {/* Floating PB card */}
             <div className="absolute -bottom-5 -right-5 bg-[#5DDBD3] rounded-2xl p-5 shadow-2xl hidden sm:block">
-              <p className="text-black font-black text-3xl" style={{ fontFamily: "'Fredoka', sans-serif" }}>248 lbs</p>
-              <p className="text-black/65 text-sm font-semibold">Personal Best Bluefin</p>
+              <p className="text-black font-black text-3xl" style={{ fontFamily: "'Fredoka', sans-serif" }}>{config.personalBestValue}</p>
+              <p className="text-black/65 text-sm font-semibold">{config.personalBestLabel}</p>
             </div>
           </motion.div>
 
@@ -606,16 +501,12 @@ function AboutMe() {
               className="text-4xl sm:text-5xl font-black text-white mb-6 leading-tight"
               style={{ fontFamily: "'Fredoka', sans-serif" }}
             >
-              Hey, I'm Axel.
+              Hey, I'm {config.aboutName}.
               <br />
               <span className="text-[#5DDBD3]">I Fish. I Film. I Teach.</span>
             </h2>
-            <p className="text-white/65 leading-relaxed mb-4">
-              Grew up on the coast of Nova Scotia, where my dad handed me a rod before I could read. Fishing wasn't a hobby — it was Sunday mornings, salt in the air, and the only time everything made sense.
-            </p>
-            <p className="text-white/65 leading-relaxed mb-9">
-              I started filming my catches because my friends didn't believe me. Turns out a lot of strangers didn't either — until they watched the videos. Now I help thousands of people find the same thing I found on that first boat: total, embarrassing, unhinged obsession with fishing.
-            </p>
+            <p className="text-white/65 leading-relaxed mb-4">{config.aboutParagraph1}</p>
+            <p className="text-white/65 leading-relaxed mb-9">{config.aboutParagraph2}</p>
 
             <div className="space-y-3.5">
               {timeline.map((t) => (
@@ -639,9 +530,10 @@ function AboutMe() {
 
 // ─── MY SETUPS ────────────────────────────────────────────────
 
-function MySetups() {
-  const [activeCategory, setActiveCategory] = useState(GEAR[0].category)
-  const activeItems = GEAR.find((g) => g.category === activeCategory)?.items ?? []
+function MySetups({ gear }: { gear: GearItem[] }) {
+  const categories = Array.from(new Set(gear.map((g) => g.category)))
+  const [activeCategory, setActiveCategory] = useState(categories[0])
+  const activeItems = gear.filter((g) => g.category === activeCategory)
 
   return (
     <section className="py-24 bg-[#111111]" id="my-setups">
@@ -655,17 +547,17 @@ function MySetups() {
             Gear That Actually Works.
           </h2>
           <div className="flex gap-2">
-            {GEAR.map((g) => (
+            {categories.map((cat) => (
               <button
-                key={g.category}
-                onClick={() => setActiveCategory(g.category)}
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
                 className={`px-4 py-2 rounded-full text-sm font-bold transition-all duration-200 ${
-                  activeCategory === g.category
+                  activeCategory === cat
                     ? "bg-[#5DDBD3] text-black"
                     : "bg-[#1e1e1e] text-white/55 border border-white/10 hover:text-white"
                 }`}
               >
-                {g.category}
+                {cat}
               </button>
             ))}
           </div>
@@ -693,7 +585,12 @@ function MySetups() {
                 <span className="text-[#5DDBD3] text-[11px] font-black tracking-wider uppercase">{item.type}</span>
                 <h3 className="text-white font-bold text-base mt-1 mb-2 leading-snug">{item.name}</h3>
                 <p className="text-white/45 text-sm leading-snug mb-3">{item.desc}</p>
-                <a href="#" className="flex items-center gap-1 text-[#FF6B35] text-sm font-bold hover:gap-2 transition-all duration-150">
+                <a
+                  href={item.link}
+                  target={item.link && item.link !== "#" ? "_blank" : undefined}
+                  rel={item.link && item.link !== "#" ? "noopener noreferrer" : undefined}
+                  className="flex items-center gap-1 text-[#FF6B35] text-sm font-bold hover:gap-2 transition-all duration-150"
+                >
                   Shop link <ExternalLink className="w-3.5 h-3.5" />
                 </a>
               </div>
@@ -707,7 +604,7 @@ function MySetups() {
 
 // ─── COURSES ──────────────────────────────────────────────────
 
-function Courses() {
+function Courses({ courses, testimonials }: { courses: CourseItem[]; testimonials: TestimonialItem[] }) {
   return (
     <section className="py-24 bg-[#0D0D0D]" id="courses">
       <div className="max-w-7xl mx-auto px-6">
@@ -726,7 +623,7 @@ function Courses() {
 
         {/* Pricing cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
-          {COURSES.map((course, i) => (
+          {courses.map((course, i) => (
             <motion.div
               key={course.name}
               className={`relative rounded-3xl p-7 border transition-all duration-250 hover:-translate-y-1 ${
@@ -795,7 +692,7 @@ function Courses() {
             What Students Say
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {TESTIMONIALS.map((t, i) => (
+            {testimonials.map((t, i) => (
               <motion.div
                 key={t.name}
                 className="bg-[#1A1A1A] rounded-2xl p-6 border border-white/[0.06]"
@@ -827,7 +724,7 @@ function Courses() {
 
 // ─── SHOP TEASER ──────────────────────────────────────────────
 
-function ShopTeaser() {
+function ShopTeaser({ merch }: { merch: MerchItem[] }) {
   return (
     <section className="py-20 bg-[#111111]">
       <div className="max-w-7xl mx-auto px-6">
@@ -843,10 +740,13 @@ function ShopTeaser() {
           </a>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-          {MERCH.map((item, i) => (
-            <motion.div
+          {merch.map((item, i) => (
+            <motion.a
               key={item.name}
-              className="group rounded-2xl overflow-hidden bg-[#1A1A1A] cursor-pointer border border-white/[0.05] hover:border-[#5DDBD3]/30 transition-colors"
+              href={item.link}
+              target={item.link && item.link !== "#" ? "_blank" : undefined}
+              rel={item.link && item.link !== "#" ? "noopener noreferrer" : undefined}
+              className="group rounded-2xl overflow-hidden bg-[#1A1A1A] cursor-pointer border border-white/[0.05] hover:border-[#5DDBD3]/30 transition-colors block"
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -864,7 +764,7 @@ function ShopTeaser() {
                 <p className="text-white font-bold">{item.name}</p>
                 <p className="text-[#5DDBD3] font-black">{item.price}</p>
               </div>
-            </motion.div>
+            </motion.a>
           ))}
         </div>
       </div>
@@ -874,9 +774,9 @@ function ShopTeaser() {
 
 // ─── INTERACTIVE MAP ──────────────────────────────────────────
 
-function InteractiveMap() {
-  const [activeSpot, setActiveSpot] = useState<number | null>(null)
-  const active = SPOTS.find((s) => s.id === activeSpot)
+function InteractiveMap({ spots, config }: { spots: SpotItem[]; config: Record<string, string> }) {
+  const [activeSpot, setActiveSpot] = useState<string | null>(null)
+  const active = spots.find((s) => s.id === activeSpot)
 
   return (
     <section className="py-24 bg-[#0D0D0D]" id="map">
@@ -897,7 +797,7 @@ function InteractiveMap() {
           style={{ height: 480 }}
         >
           <img
-            src="https://images.unsplash.com/photo-1495171081156-cc1209ddf6a0?w=1400&h=800&fit=crop&auto=format"
+            src={config.mapImage}
             alt="Aerial ocean view"
             className="absolute inset-0 w-full h-full object-cover opacity-35"
           />
@@ -912,7 +812,7 @@ function InteractiveMap() {
             }}
           />
 
-          {SPOTS.map((spot) => (
+          {spots.map((spot) => (
             <button
               key={spot.id}
               className="absolute transform -translate-x-1/2 -translate-y-1/2 group"
@@ -1031,7 +931,7 @@ function Newsletter() {
 
 // ─── SPONSORS ─────────────────────────────────────────────────
 
-function Sponsors() {
+function Sponsors({ sponsors }: { sponsors: SponsorItem[] }) {
   return (
     <section className="py-14 bg-[#0D0D0D] border-t border-white/[0.05]">
       <div className="max-w-7xl mx-auto px-6">
@@ -1039,13 +939,13 @@ function Sponsors() {
           Brand Partnerships
         </p>
         <div className="flex flex-wrap gap-x-10 gap-y-5 justify-center items-center">
-          {SPONSORS.map((s) => (
+          {sponsors.map((s) => (
             <span
-              key={s}
+              key={s.name}
               className="text-white/18 hover:text-white/55 transition-colors duration-250 font-black text-xl tracking-widest cursor-pointer"
               style={{ fontFamily: "'Fredoka', sans-serif" }}
             >
-              {s}
+              {s.name}
             </span>
           ))}
         </div>
@@ -1056,7 +956,7 @@ function Sponsors() {
 
 // ─── FOOTER ───────────────────────────────────────────────────
 
-function Footer() {
+function Footer({ config }: { config: Record<string, string> }) {
   const [email, setEmail] = useState("")
   const [message, setMessage] = useState("")
 
@@ -1075,19 +975,19 @@ function Footer() {
                 AXSEA
               </span>
             </div>
-            <p className="text-white/35 text-sm leading-relaxed mb-7">
-              Axel Béchard — fisherman, content creator, and firm believer that the best days end with salt in your hair and a cooler that barely closes.
-            </p>
+            <p className="text-white/35 text-sm leading-relaxed mb-7">{config.footerBio}</p>
             <div className="flex gap-3">
               {[
-                { icon: <Instagram className="w-5 h-5" />, color: "hover:bg-[#E1306C]", label: "Instagram" },
-                { icon: <Youtube className="w-5 h-5" />, color: "hover:bg-red-600", label: "YouTube" },
-                { icon: <MessageCircle className="w-5 h-5" />, color: "hover:bg-green-600", label: "WhatsApp" },
-                { icon: <span className="text-xs font-black">TK</span>, color: "hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500", label: "TikTok" },
+                { icon: <Instagram className="w-5 h-5" />, color: "hover:bg-[#E1306C]", label: "Instagram", href: config.socialInstagramUrl },
+                { icon: <Youtube className="w-5 h-5" />, color: "hover:bg-red-600", label: "YouTube", href: config.socialYoutubeUrl },
+                { icon: <MessageCircle className="w-5 h-5" />, color: "hover:bg-green-600", label: "WhatsApp", href: config.socialWhatsappUrl },
+                { icon: <span className="text-xs font-black">TK</span>, color: "hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500", label: "TikTok", href: config.socialTiktokUrl },
               ].map((s) => (
                 <a
                   key={s.label}
-                  href="#"
+                  href={s.href || "#"}
+                  target={s.href && s.href !== "#" ? "_blank" : undefined}
+                  rel={s.href && s.href !== "#" ? "noopener noreferrer" : undefined}
                   aria-label={s.label}
                   className={`w-10 h-10 rounded-full bg-white/8 flex items-center justify-center text-white/50 hover:text-white ${s.color} transition-all duration-250`}
                 >
@@ -1143,7 +1043,7 @@ function Footer() {
         </div>
 
         <div className="border-t border-white/[0.05] pt-8 flex flex-col sm:flex-row justify-between items-center gap-3">
-          <p className="text-white/20 text-xs">© 2025 Axsea · Axel Béchard. All rights reserved.</p>
+          <p className="text-white/20 text-xs">{config.copyrightText}</p>
           <p className="text-white/20 text-xs">Built with salt, Wi-Fi, and too much coffee.</p>
         </div>
       </div>
@@ -1155,6 +1055,7 @@ function Footer() {
 
 export default function App() {
   const [showIntro, setShowIntro] = useState(true)
+  const { content } = useSiteContent()
 
   return (
     <div className="bg-[#0D0D0D] min-h-screen" style={{ fontFamily: "'DM Sans', sans-serif" }}>
@@ -1162,18 +1063,18 @@ export default function App() {
 
       <div>
         <Navbar />
-        <Hero />
-        <SocialProofBar />
-        <FeaturedVideos />
-        <CatchLog />
-        <AboutMe />
-        <MySetups />
-        <Courses />
-        <ShopTeaser />
-        <InteractiveMap />
+        <Hero config={content.config} />
+        <SocialProofBar config={content.config} />
+        <FeaturedVideos videos={content.videos} />
+        <CatchLog catchLog={content.catchLog} />
+        <AboutMe config={content.config} timeline={content.timeline} />
+        <MySetups gear={content.gear} />
+        <Courses courses={content.courses} testimonials={content.testimonials} />
+        <ShopTeaser merch={content.merch} />
+        <InteractiveMap spots={content.spots} config={content.config} />
         <Newsletter />
-        <Sponsors />
-        <Footer />
+        <Sponsors sponsors={content.sponsors} />
+        <Footer config={content.config} />
       </div>
     </div>
   )
