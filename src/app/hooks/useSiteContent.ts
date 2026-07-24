@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { DEFAULT_CONTENT } from "@/app/data/defaultContent"
+import { getYouTubeThumbnail } from "@/app/lib/youtube"
 import type { RawSiteContent, SiteContent } from "@/app/data/types"
 
 function toBool(v: string | undefined) {
@@ -17,9 +18,8 @@ function normalize(raw: Partial<RawSiteContent>): SiteContent {
       title: r.title ?? "",
       views: r.views ?? "",
       duration: r.duration ?? "",
-      platform: r.platform ?? "",
-      thumb: r.thumb ?? "",
       url: r.url || "#",
+      thumb: getYouTubeThumbnail(r.url ?? ""),
     })),
     catchLog: (raw.catchLog ?? []).map((r) => ({
       id: r.id ?? "",

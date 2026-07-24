@@ -36,6 +36,19 @@ function configToObject(values) {
   return obj
 }
 
+// Tabs are fetched one at a time (rather than a single values:batchGet) on
+// purpose: batchGet is all-or-nothing, so a single tab the site owner
+// hasn't created yet would 400 the entire response. Fetching independently
+// means a missing/renamed tab just comes back empty and that section falls
+// back to defaults, instead of taking down every section.
+async function fetchTab(sheetId, apiKey, tabName) {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(tabName)}?key=${apiKey}`
+  const res = await fetch(url)
+  if (!res.ok) return []
+  const data = await res.json()
+  return data.values ?? []
+}
+
 export default async function handler(req, res) {
   const sheetId = process.env.GOOGLE_SHEET_ID
   const apiKey = process.env.GOOGLE_SHEETS_API_KEY
@@ -47,29 +60,16 @@ export default async function handler(req, res) {
     return
   }
 
-  const tabNames = Object.values(SHEET_TABS)
-  const rangesQuery = tabNames.map((name) => `ranges=${encodeURIComponent(name)}`).join("&")
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values:batchGet?${rangesQuery}&key=${apiKey}`
-
   try {
-    const sheetRes = await fetch(url)
-    if (!sheetRes.ok) {
-      const detail = await sheetRes.text()
-      res.status(502).json({ error: `Google Sheets API responded with ${sheetRes.status}`, detail })
-      return
-    }
-
-    const data = await sheetRes.json()
-    const valueRanges = data.valueRanges ?? []
-
-    const result = {}
-    Object.keys(SHEET_TABS).forEach((key, i) => {
-      const values = valueRanges[i]?.values
-      result[key] = key === "config" ? configToObject(values) : rowsToObjects(values)
-    })
+    const entries = await Promise.all(
+      Object.entries(SHEET_TABS).map(async ([key, tabName]) => {
+        const values = await fetchTab(sheetId, apiKey, tabName)
+        return [key, key === "config" ? configToObject(values) : rowsToObjects(values)]
+      })
+    )
 
     res.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate=300")
-    res.status(200).json(result)
+    res.status(200).json(Object.fromEntries(entries))
   } catch (err) {
     res.status(502).json({ error: "Failed to fetch Google Sheet data", detail: String(err) })
   }

@@ -2,9 +2,9 @@ export interface VideoItem {
   title: string
   views: string
   duration: string
-  platform: string
-  thumb: string
   url: string
+  // Derived from `url`, not read from the sheet — see src/app/lib/youtube.ts.
+  thumb: string
 }
 
 export interface CatchLogItem {

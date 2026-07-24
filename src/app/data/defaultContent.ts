@@ -5,12 +5,12 @@ import type { SiteContent } from "./types"
 // unreachable). Keeps the site looking complete at all times.
 export const DEFAULT_CONTENT: SiteContent = {
   videos: [
-    { title: "187lb Bluefin Tuna — 3-Hour Battle in the Gulf", views: "1.2M views", duration: "22:14", platform: "YouTube", thumb: "https://images.unsplash.com/photo-1605750416507-734370f71920?w=600&h=340&fit=crop&auto=format", url: "#" },
-    { title: "Mahi Slaughter — Bahamas Weedline Run", views: "847K views", duration: "18:32", platform: "YouTube", thumb: "https://images.unsplash.com/photo-1601226041388-8bbabdd6e37e?w=600&h=340&fit=crop&auto=format", url: "#" },
-    { title: "Night Tarpon Under the Bridge — Keys POV", views: "3.1M views", duration: "09:47", platform: "TikTok", thumb: "https://images.unsplash.com/photo-1582658085438-790f8837944b?w=600&h=340&fit=crop&auto=format", url: "#" },
-    { title: "Rigging a Spreader Bar for Tuna — Full Tutorial", views: "612K views", duration: "31:05", platform: "YouTube", thumb: "https://images.unsplash.com/photo-1551131618-3f0a5cf594b4?w=600&h=340&fit=crop&auto=format", url: "#" },
-    { title: "Striped Bass on the Cape Cod Rip — Popper Bite", views: "498K views", duration: "14:21", platform: "YouTube", thumb: "https://images.unsplash.com/photo-1515631604561-23e0be68ee06?w=600&h=340&fit=crop&auto=format", url: "#" },
-    { title: "Reading Sonar: How I Find Fish in Open Water", views: "1.8M views", duration: "28:11", platform: "YouTube", thumb: "https://images.unsplash.com/photo-1595886565824-b4f5c5a9c2d5?w=600&h=340&fit=crop&auto=format", url: "#" },
+    { title: "187lb Bluefin Tuna — 3-Hour Battle in the Gulf", views: "1.2M views", duration: "22:14", thumb: "https://images.unsplash.com/photo-1605750416507-734370f71920?w=600&h=340&fit=crop&auto=format", url: "#" },
+    { title: "Mahi Slaughter — Bahamas Weedline Run", views: "847K views", duration: "18:32", thumb: "https://images.unsplash.com/photo-1601226041388-8bbabdd6e37e?w=600&h=340&fit=crop&auto=format", url: "#" },
+    { title: "Night Tarpon Under the Bridge — Keys POV", views: "3.1M views", duration: "09:47", thumb: "https://images.unsplash.com/photo-1582658085438-790f8837944b?w=600&h=340&fit=crop&auto=format", url: "#" },
+    { title: "Rigging a Spreader Bar for Tuna — Full Tutorial", views: "612K views", duration: "31:05", thumb: "https://images.unsplash.com/photo-1551131618-3f0a5cf594b4?w=600&h=340&fit=crop&auto=format", url: "#" },
+    { title: "Striped Bass on the Cape Cod Rip — Popper Bite", views: "498K views", duration: "14:21", thumb: "https://images.unsplash.com/photo-1515631604561-23e0be68ee06?w=600&h=340&fit=crop&auto=format", url: "#" },
+    { title: "Reading Sonar: How I Find Fish in Open Water", views: "1.8M views", duration: "28:11", thumb: "https://images.unsplash.com/photo-1595886565824-b4f5c5a9c2d5?w=600&h=340&fit=crop&auto=format", url: "#" },
   ],
 
   catchLog: [

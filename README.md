@@ -30,7 +30,7 @@
 
      | Tab            | Columns |
      |----------------|---------|
-     | `Videos`       | `title`, `views`, `duration`, `platform`, `thumb`, `url` |
+     | `Videos`       | `title`, `views`, `duration`, `url` |
      | `CatchLog`     | `id`, `species`, `location`, `date`, `weight`, `photo`, `story` |
      | `Gear`         | `category`, `name`, `type`, `desc`, `img`, `link` |
      | `Courses`      | `name`, `price`, `level`, `emoji`, `popular`, `accentColor`, `desc`, `includes` |
@@ -42,8 +42,11 @@
      | `Config`       | `key`, `value` (one row per setting, see below) |
 
      Notes on a few columns:
-     - `img` / `photo` / `thumb` — a public image URL (Unsplash, a Google
-       Drive "anyone with the link" direct image URL, your own CDN, etc.).
+     - `Videos.url` — the full YouTube video URL (`watch?v=`, `youtu.be/`,
+       or `shorts/` links all work). The thumbnail is generated automatically
+       from the video ID — no separate thumbnail column needed.
+     - `img` / `photo` — a public image URL (Unsplash, a Google Drive
+       "anyone with the link" direct image URL, your own CDN, etc.).
      - `popular` — `TRUE` or `FALSE` (only one course should be `TRUE`).
      - `includes` — pipe-separated, e.g. `6 HD video modules|Gear buying guide PDF`.
      - `x` / `y` — percentage position (0–100) of a map pin on the spots image.

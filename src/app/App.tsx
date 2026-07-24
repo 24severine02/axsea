@@ -346,11 +346,13 @@ function FeaturedVideos({ videos }: { videos: VideoItem[] }) {
               whileHover={{ y: -5 }}
             >
               <div className="relative h-48 bg-[#252525] overflow-hidden">
-                <img
-                  src={v.thumb}
-                  alt={v.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
+                {v.thumb && (
+                  <img
+                    src={v.thumb}
+                    alt={v.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                )}
                 <div className="absolute inset-0 bg-black/25 group-hover:bg-black/10 transition-colors duration-300" />
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="w-13 h-13 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center group-hover:bg-[#5DDBD3]/80 transition-all duration-250 w-12 h-12">
@@ -360,14 +362,8 @@ function FeaturedVideos({ videos }: { videos: VideoItem[] }) {
                 <span className="absolute bottom-2 right-2 bg-black/75 text-white text-[11px] px-2 py-0.5 rounded font-mono">
                   {v.duration}
                 </span>
-                <span
-                  className={`absolute top-2 left-2 text-[11px] font-black px-2.5 py-1 rounded-full ${
-                    v.platform === "YouTube"
-                      ? "bg-red-600 text-white"
-                      : "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
-                  }`}
-                >
-                  {v.platform}
+                <span className="absolute top-2 left-2 text-[11px] font-black px-2.5 py-1 rounded-full bg-red-600 text-white">
+                  YouTube
                 </span>
               </div>
               <div className="p-4">
