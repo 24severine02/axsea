@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto"
-import { sanityWriteClient } from "./sanityWriteClient"
+import { sanityWriteClient } from "./sanityWriteClient.js"
 
 export type CartLine = {
   productId: string

@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node"
-import { sanityWriteClient } from "../_lib/sanityWriteClient"
-import { computeOrderTotals, type CartLine } from "../_lib/pricing"
-import { generateOrderRef, isValidEmail } from "../_lib/validation"
+import { sanityWriteClient } from "../_lib/sanityWriteClient.js"
+import { computeOrderTotals, type CartLine } from "../_lib/pricing.js"
+import { generateOrderRef, isValidEmail } from "../_lib/validation.js"
 
 type RequestBody = {
   items?: CartLine[]

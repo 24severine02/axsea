@@ -1,4 +1,4 @@
-import { sanityWriteClient } from "./sanityWriteClient"
+import { sanityWriteClient } from "./sanityWriteClient.js"
 
 export type YouTubeVideo = {
   videoId: string

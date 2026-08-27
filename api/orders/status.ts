@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node"
-import { sanityWriteClient } from "../_lib/sanityWriteClient"
-import { isValidOrderRefFormat } from "../_lib/validation"
+import { sanityWriteClient } from "../_lib/sanityWriteClient.js"
+import { isValidOrderRefFormat } from "../_lib/validation.js"
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "GET") {

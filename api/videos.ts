@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node"
-import { fetchLatestVideos } from "./_lib/youtube"
+import { fetchLatestVideos } from "./_lib/youtube.js"
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "GET") {
